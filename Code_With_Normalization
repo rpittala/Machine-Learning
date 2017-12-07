@@ -1,0 +1,90 @@
+import numpy as np
+import pandas as pd
+from sklearn.cross_validation import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+from sklearn import preprocessing
+from sklearn import metrics
+from sklearn import tree
+from sklearn import svm
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from pandas import ExcelWriter
+from pandas import ExcelFile
+balance_data = pd.read_excel('/home/ubuntu/Desktop/TCDefect_Dataset.xls', sheetname='Sheet1')
+balance_data.apply(lambda x: sum(x.isnull()),axis=0) 
+balance_data.describe()
+print("Dataset Lenght:: ", len(balance_data))
+print("Dataset Shape:: ", balance_data.shape)
+df = balance_data.values[:,0].astype(int)
+print(df)
+print(type(df))
+dflst = df.tolist()
+print(type(dflst))
+print(dflst)
+
+balance_data_X = balance_data.values[:, 0:13]
+Y = balance_data.values[:,13]
+X =(balance_data_X-balance_data_X.min())/(balance_data_X.max()-balance_data_X.min())
+print("Min-Max Technique of Normalizing Data")
+print(X.round(2))
+print(Y.astype(int))
+X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size = 0.3, random_state = 100)
+#print("Input Variables for Train Set: \n",X_train.round(2))
+print("Input Variable for Test Set: \n" ,X_test.round(2))
+#print("Output Variables for Train Set: \n", y_train)
+#print("OUtput Variables for Test Set: \n",y_test)
+
+#balance_data['Req Error'].mean()
+#balance_data.boxplot(column='Req Error')
+#x = balance_data.values #returns a numpy array
+#Min Max technique of normalizing the data
+#min_max_scaler = preprocessing.MinMaxScaler()
+#x_scaled = min_max_scaler.fit_transform(x)
+#balance_data = pd.DataFrame(x_scaled)
+#print(balance_data)
+
+
+#normalized_df1=(balance_data-balance_data.min())/(balance_data.max()-balance_data.min())
+#print("Min-Max Technique of Normalizing Data")
+#print(normalized_df1)
+#print("Mean-Std [aka Z-Score]Technique of Normalizing Data")
+#normalized_df2=(balance_data-balance_data.mean())/balance_data.std()
+#print(normalized_df2)
+#APPLY OF DECISION TREE
+clf_entropy = DecisionTreeClassifier(criterion = "entropy", random_state = 100,
+ max_depth=3, min_samples_leaf=5)
+clf_entropy.fit(X_train.round(2), y_train)
+#print("Bug Prediction of 6 Test Cases of available 18 Test Cases:- \n")
+y_pred_en = clf_entropy.predict(X_test.round(2))
+print((y_pred_en))
+print(X_test)
+v1 = []
+for i in X_test:
+    v1.append(i[0])
+v = np.array(v1,dtype = int)
+print("Test Case Numbers taken in Test Set: \n", v)
+print("Test Case Status Available in Test Set: \n",y_test.astype(int))
+print("Test Case Status from Prediction: \n", y_pred_en.astype(int))
+v = np.c_[v,y_test.astype(int),y_pred_en.astype(int)]
+print("Test Case Number <=====> Actual Status <=======> Predicted Status")
+print(type(v))
+status = []
+for i in v:
+    if i[1] == i[2]:
+        status.append("Pass")
+    else:
+        status.append("Fail")
+status1 = np.array(status)
+result = np.c_[v,status1]
+print(result)
+        
+print("End Rishi")
+
+# Need to Use Dictionary Here
+print("$$$$$$$$$$$$$$$$$$$$$$$$$$44")
+print("Decision Tree Prediction:- \n",y_pred_en)
+print("Accuracy of Decision Tree is:- \n", accuracy_score(y_test,y_pred_en)*100) 
+
+
